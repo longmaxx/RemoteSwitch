@@ -39,7 +39,9 @@ const char *password = "YourPSKHere";
 ESP8266WebServer server ( 80 );
 
 const int led = 13;
-
+const int btn_on = 4;
+const int btn_off = 5;
+// =================================== request handlers =========================================================
 void handleRoot() {
 	digitalWrite ( led, 1 );
 	char temp[400];
@@ -99,6 +101,16 @@ void action_ledoff(){
   server.send ( 200, "text/plain", "Led off" );
 }
 
+void action_switch_on(){
+  digitalWrite ( btn_on, 1 );
+  server.send ( 200, "text/plain", "Switch power was set on" );
+}
+
+void action_switch_off(){
+  digitalWrite ( btn_off, 0 );
+  server.send ( 200, "text/plain", "Switch power was set off" );
+}
+// =================================== END request handlers =========================================================
 void setup ( void ) {
 	pinMode ( led, OUTPUT );
 	digitalWrite ( led, 0 );
@@ -124,8 +136,10 @@ void setup ( void ) {
   // Add event handlers for http requests
 	server.on ( "/", handleRoot );
   server.onNotFound ( action_handleNotFound );
-  server.on("/ledon",action_ledon);
-  server.on("/ledon",action_ledoff);
+  server.on("/led_on",action_ledon);
+  server.on("/led_off",action_ledoff);
+  server.on("/switch_on",action_switch_on);
+  server.on("/switch_off",action_switch_off);
 //	server.on ( "/inline", []() {
 //		server.send ( 200, "text/plain", "this works as well" );
 //	} );
@@ -137,3 +151,5 @@ void setup ( void ) {
 void loop ( void ) {
 	server.handleClient();
 }
+
+
